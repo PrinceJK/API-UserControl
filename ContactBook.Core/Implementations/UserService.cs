@@ -54,7 +54,7 @@ namespace ContactBook.Core.Implementations
             throw new ArgumentException("Resource not found");
         }
 
-        public async Task<IEnumerable<UserResponseDTO>> GetAllUsers(PagingParameterModel pagingParameter)
+        public async Task<IEnumerable<UserResponseDTO>> GetAllUsers(Pagination pagingParameter)
         {
             var users = await _userManager.Users.ToListAsync();
             var allUsers = new List<UserResponseDTO>();
@@ -94,7 +94,7 @@ namespace ContactBook.Core.Implementations
             throw new ArgumentException("User not found");
         }
 
-        public async Task<IEnumerable<UserResponseDTO>> Search(PagingParameterModel pagingParameter, string searchWord = "")
+        public async Task<IEnumerable<UserResponseDTO>> Search(Pagination pagingParameter, string searchWord = "")
         {
             
 

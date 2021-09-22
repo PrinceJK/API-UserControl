@@ -9,9 +9,9 @@ namespace ContactBook.Core.Interfaces
     public interface IUserService
     {
         Task<bool> DeleteUser(string userId);
-        Task<IEnumerable<UserResponseDTO>> GetAllUsers(PagingParameterModel pagingParameter);
+        Task<IEnumerable<UserResponseDTO>> GetAllUsers(Pagination pagingParameter);
         Task<UserResponseDTO> GetUser(string userId);
-        Task<IEnumerable<UserResponseDTO>> Search(PagingParameterModel pagingParameter, string searchWord = "");
+        Task<IEnumerable<UserResponseDTO>> Search(Pagination pagingParameter, string searchWord = "");
         Task<UserResponseDTO> GetUserByEmail(string email);
         Task<bool> Update(string userId, UpdateUserRequestDTO updateUser);
         Task<bool> UploadImage(string userId, string url);

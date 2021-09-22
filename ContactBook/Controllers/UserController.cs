@@ -29,7 +29,7 @@ namespace ContactBook.Controllers
         }
 
         [HttpGet("all-users")]
-        public async Task<IActionResult> GetAllUsers([FromQuery] PagingParameterModel pageParameters)
+        public async Task<IActionResult> GetAllUsers([FromQuery] Pagination pageParameters)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace ContactBook.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search(PagingParameterModel parameterModel, string email = "")
+        public async Task<IActionResult> Search(Pagination parameterModel, string email = "")
         {
             var result = await _userService.Search(parameterModel, email);
             try
