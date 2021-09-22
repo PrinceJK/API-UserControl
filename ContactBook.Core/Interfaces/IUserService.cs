@@ -10,8 +10,8 @@ namespace ContactBook.Core.Interfaces
     public interface IUserService
     {
         Task<ICollection<User>> GetUsers(int page);
-        Task<ICollection<User>> GetUsersByEmail(string email, int page);
-        Task<ICollection<User>> GetUsersByName(string name, int page);
+        Task<Response<Pagination<UserDTO>>> GetUsersByEmail(string email, int page);
+        Task<Response<Pagination<UserDTO>>> GetUsersByName(string name, int page);
         Task<IEnumerable<UserResponseDTO>> GetUserBySearchWord(string searchWord, int page);
         int perPage { get; }
         //Task<bool> DeleteUser(string userId);
