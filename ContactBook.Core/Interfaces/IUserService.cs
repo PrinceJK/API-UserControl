@@ -12,7 +12,7 @@ namespace ContactBook.Core.Interfaces
         Task<ICollection<User>> GetUsers(int page);
         Task<Response<Pagination<UserDTO>>> GetUsersByEmail(string email, int page);
         Task<Response<Pagination<UserDTO>>> GetUsersByName(string name, int page);
-        Task<IEnumerable<UserResponseDTO>> GetUserBySearchWord(string searchWord, int page);
+        Task<IEnumerable<UserDTO>> GetUserBySearchWord(string searchWord, int page);
         int perPage { get; }
         //Task<bool> DeleteUser(string userId);
         //Task<IEnumerable<UserResponseDTO>> GetAllUsers(Pagination pagingParameter);
