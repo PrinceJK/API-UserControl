@@ -34,7 +34,7 @@ namespace ContactBook
         {
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IAuthentication, Authentication>();
-            services.AddScoped<IUserService, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IImageService, ImageService>();
             services.Configure<ImageUploadConfig>(Configuration.GetSection("ImageUploadSettings"));
 

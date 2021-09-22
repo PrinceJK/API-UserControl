@@ -13,7 +13,9 @@ namespace ContactBook.Core.Interfaces
         Task<Response<Pagination<UserDTO>>> GetUsersByEmail(string email, int page);
         Task<Response<Pagination<UserDTO>>> GetUsersByName(string name, int page);
         Task<IEnumerable<UserDTO>> GetUserBySearchWord(string searchWord, int page);
-        int perPage { get; }
+        Task<Response<string>> UpdateUser(User user, UpdateUserDTO model);
+        Task<Response<UserDTO>> GetUser(string id);
+        Task<Response<string>> DeleteUserByUserId(string id);
         //Task<bool> DeleteUser(string userId);
         //Task<IEnumerable<UserResponseDTO>> GetAllUsers(Pagination pagingParameter);
         //Task<UserResponseDTO> GetUser(string userId);
