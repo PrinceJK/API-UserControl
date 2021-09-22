@@ -12,7 +12,7 @@ namespace ContactBook.Data.Abstraction
         Task<ICollection<User>> GetUsers(int page);
         Task<ICollection<User>> GetUsersByEmail(string email, int page);
         Task<ICollection<User>> GetUsersByName(string name, int page);
-        Task<IEnumerable<User>> GetUserBySearchWord(string searchWord, int page);
+        Task<ICollection<User>> GetUserBySearchWord(string searchWord, int page);
         int perPage { get; }
     }
 }

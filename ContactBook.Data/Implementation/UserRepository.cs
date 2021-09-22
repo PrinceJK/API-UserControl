@@ -17,7 +17,7 @@ namespace ContactBook.Data.Implementation
         }
         public int perPage { get; } = 10;
 
-        public async Task<IEnumerable<User>> GetUserBySearchWord(string searchWord, int page)
+        public async Task<ICollection<User>> GetUserBySearchWord(string searchWord, int page)
         {
             searchWord = searchWord.ToLower();
             var users = GetAll().Where(u => u.FirstName.ToLower().Contains(searchWord)

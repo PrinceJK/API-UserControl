@@ -9,10 +9,9 @@ namespace ContactBook.Core.Interfaces
 {
     public interface IUserService
     {
-        Task<ICollection<User>> GetUsers(int page);
         Task<Response<Pagination<UserDTO>>> GetUsersByEmail(string email, int page);
         Task<Response<Pagination<UserDTO>>> GetUsersByName(string name, int page);
-        Task<IEnumerable<UserDTO>> GetUserBySearchWord(string searchWord, int page);
+        Task<Response<Pagination<UserDTO>>> GetUserBySearchWord(string searchWord, int page);
         Task<Response<string>> UpdateUser(User user, UpdateUserDTO model);
         Task<Response<UserDTO>> GetUser(string id);
         Task<Response<string>> DeleteUserByUserId(string id);

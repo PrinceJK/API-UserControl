@@ -28,7 +28,7 @@ namespace ContactBook.Core.Implementations
                 _options.APIKey,
                 _options.APISecret));
         }
-        public async Task<UploadResult> UploadAsync(IFormFile image)
+        public async Task<UploadResult> UploadImage(IFormFile image)
         {
             var pictureSize = Convert.ToInt64(_configuration.GetSection("PhotoSettings:Size").Get<string>());
             if (image.Length > pictureSize)
@@ -67,5 +67,7 @@ namespace ContactBook.Core.Implementations
             }
             return uploadResult;
         }
+
+        
     }
 }

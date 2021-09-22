@@ -30,7 +30,7 @@ namespace ContactBook.Core.Implementations
             {
                 if (await _userManager.CheckPasswordAsync(user, userLogin.Password))
                 {
-                    var response = UserMappings.GetUserResponse(user);
+                    var response = MapToUserDTO.GetUserResponse(user);
                     response.Token = await _tokenGenerator.GenerateToken(user);
                     return response;
                 }
@@ -42,11 +42,11 @@ namespace ContactBook.Core.Implementations
 
         public async Task<UserResponseDTO> Register(RegistrationRequestDTO registrationRequest)
         {
-            User user = UserMappings.GetUser(registrationRequest);
+            User user = MapToUserDTO.GetUser(registrationRequest);
             IdentityResult result = await _userManager.CreateAsync(user, registrationRequest.Password);
             if (result.Succeeded)
             {
-                return UserMappings.GetUserResponse(user);
+                return MapToUserDTO.GetUserResponse(user);
             }
 
             string errors = string.Empty;
