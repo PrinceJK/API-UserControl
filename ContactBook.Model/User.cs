@@ -12,5 +12,7 @@ namespace ContactBook.Model
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool IsActive { get; set; }
+        public string Token { get; set; }
+        public string Password { get; set; }
     }
 }

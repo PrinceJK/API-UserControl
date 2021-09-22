@@ -18,10 +18,41 @@ namespace ContactBook.Data.DTO.Mappings
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 IsActive = user.IsActive,
+                Token = user.Token
             };
             return dto;
         }
 
-        
+        public static UserResponseDTO ToUserResponseDTO(User user)
+        {
+            var dto = new UserResponseDTO
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                AvatarUrl = user.AvatarUrl,
+                PublicId = user.PublicId,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                IsActive = user.IsActive,
+                Token = user.Token
+            };
+            return dto;
+        }
+        public static User ToUserRegistrationDTO(RegistrationRequestDTO user)
+        {
+            var dto = new User
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Password = user.PassWord
+            };
+            return dto;
+        }
     }
 }
