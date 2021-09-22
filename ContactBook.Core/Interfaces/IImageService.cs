@@ -6,6 +6,6 @@ namespace ContactBook.Core.Interfaces
 {
     public interface IImageService
     {
-        Task<UploadResult> UploadAsync(IFormFile image);
+        Task<UploadResult> UploadImage(IFormFile image);
     }
 }

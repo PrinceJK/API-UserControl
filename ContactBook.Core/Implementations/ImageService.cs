@@ -58,11 +58,11 @@ namespace ContactBook.Core.Implementations
             //fetch the image using image stream
             using (var imageStream = image.OpenReadStream())
             {
-                string filename = Guid.NewGuid().ToString() + image.FileName;
+                string filename = Guid.NewGuid().ToString() + "_" + image.FileName;
                 uploadResult = await cloudinary.UploadAsync(new ImageUploadParams()
                 {
                     File = new FileDescription(filename, imageStream),
-                    Transformation = new Transformation().Crop("thumb").Gravity("face").Width(150)
+                    Transformation = new Transformation().Crop("thumb").Gravity("face").Width(1000).Height(1000).Radius(40)
                 });
             }
             return uploadResult;
