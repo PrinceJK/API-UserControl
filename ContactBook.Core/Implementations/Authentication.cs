@@ -3,6 +3,8 @@ using ContactBook.Data.DTO;
 using ContactBook.Data.DTO.Mappings;
 using ContactBook.Model;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +17,13 @@ namespace ContactBook.Core.Implementations
     {
         private readonly UserManager<User> _userManager;
         private readonly ITokenGenerator _tokenGenerator;
+        private readonly IConfiguration _configuration;
 
-        public Authentication(UserManager<User> userManager, ITokenGenerator tokenGenerator)
+        public Authentication(IServiceProvider service)
         {
-            _userManager = userManager;
-            _tokenGenerator = tokenGenerator;
+            _userManager = service.GetRequiredService<UserManager<User>>();
+            _tokenGenerator = service.GetRequiredService<ITokenGenerator>();
+            _configuration = service.GetRequiredService<IConfiguration>();
         }
 
         public async Task<UserResponseDTO> Login(UserLoginDTO userLogin)
@@ -31,7 +35,7 @@ namespace ContactBook.Core.Implementations
                 if (await _userManager.CheckPasswordAsync(user, userLogin.Password))
                 {
                     var response = MapToUserDTO.ToUserResponseDTO(user);
-                    response.Token = await _tokenGenerator.GenerateToken(user);
+                    response.Token = await _tokenGenerator.GenerateToken(user, _configuration);
                     return response;
                 }
 

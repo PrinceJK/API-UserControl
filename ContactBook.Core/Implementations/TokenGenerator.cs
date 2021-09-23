@@ -2,6 +2,7 @@
 using ContactBook.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -14,17 +15,15 @@ namespace ContactBook.Core.Implementations
 {
     public class TokenGenerator : ITokenGenerator
     {
-        private readonly IConfiguration _configuration;
         private readonly UserManager<User> _userManager;
 
-        public TokenGenerator(IConfiguration configuration, UserManager<User> userManager)
+        public TokenGenerator(IServiceProvider service)
         {
-            _configuration = configuration;
-            _userManager = userManager;
+            _userManager = service.GetRequiredService<UserManager<User>>();
         }
        
 
-        public async Task<string> GenerateToken(User user)
+        public async Task<string> GenerateToken(User user, IConfiguration _configuration)
         {
             var authClaims = new List<Claim>
             {

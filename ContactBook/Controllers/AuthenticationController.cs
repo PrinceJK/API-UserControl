@@ -2,6 +2,7 @@
 using ContactBook.Data.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
@@ -12,9 +13,9 @@ namespace ContactBook.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthentication _authentication;
-        public AuthenticationController(IAuthentication authentication)
+        public AuthenticationController(IServiceProvider service)
         {
-            _authentication = authentication;
+            _authentication = service.GetRequiredService<IAuthentication>();
         }
 
         [HttpPost("login")]

@@ -1,11 +1,14 @@
-﻿ using ContactBook.Core.Interfaces;
+﻿using ContactBook.Core.Implementations;
+using ContactBook.Core.Interfaces;
 using ContactBook.Data.DTO;
 using ContactBook.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -18,136 +21,111 @@ namespace ContactBook.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IConfiguration _config;
+        private readonly UserManager<User> _userManager;
         private readonly IImageService _imageService;
 
-        public UserController(IUserService userService, IConfiguration config, IImageService imageService)
+        public UserController(IServiceProvider service)
         {
-            _userService = userService;
-            _config = config;
-            _imageService = imageService;
+            _userManager = service.GetRequiredService<UserManager<User>>();
+            _userService = service.GetRequiredService<IUserService>();
+            _imageService = service.GetRequiredService<IImageService>();
         }
 
-        [HttpGet("all-users")]
-        public async Task<IActionResult> GetAllUsers([FromQuery] Pagination pageParameters)
+        [HttpGet("all-users/{pageNumber}")]
+        public async Task<IActionResult> GetAllUsers(int pageNumber)
         {
-            try
-            {
-                return Ok(await _userService.GetAllUsers(pageParameters));
-            }
-            catch (ArgumentNullException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
-        }
-
-        [HttpGet("search")]
-        public async Task<IActionResult> Search(Pagination parameterModel, string email = "")
-        {
-            var result = await _userService.Search(parameterModel, email);
-            try
+            var result = await _userService.GetUsers(pageNumber);
+            if (result.Success)
             {
                 return Ok(result);
             }
-            catch (ArgumentNullException ex)
+            else
             {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
+                return BadRequest(result);
             }
         }
 
-        [HttpGet("id")]
-        public async Task<IActionResult> GetUserById(string userId)
+        [HttpGet("search/{searchWord}/{pageNumber}")]
+        public async Task<IActionResult> Search(string searchWord, int pageNumber)
         {
-            try
+            var result = await _userService.GetUserBySearchWord(searchWord, pageNumber);
+            if (result.Success)
             {
-                return Ok(await _userService.GetUser(userId));
+                return Ok(result);
             }
-            catch (ArgumentNullException ex)
+            else
             {
-                return BadRequest(ex.Message);
+                return BadRequest(result);
             }
-            catch (Exception)
+        }
+
+        [HttpGet("get-user/{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            var result = await _userService.GetUser(id);
+            if (result.Success)
             {
-                return StatusCode(500);
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
             }
         }
 
 
-        [HttpGet("email")]
+        [HttpGet("get-user/{email}")]
         public async Task<IActionResult> GetUserByEmail(string email)
         {
-            try
+            var result = await _userManager.FindByEmailAsync(email);
+            if (result != null)
             {
-                return Ok(await _userService.GetUserByEmail(email));
+                return Ok(result);
             }
-            catch (ArgumentNullException ex)
+            else
             {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
+                return BadRequest(result);
             }
         }
 
-        [HttpPut("update/id")]
-        public async Task<IActionResult> Update(UpdateUserRequestDTO updateUserRequest)
+        [HttpPut("update-user")]
+        public async Task<IActionResult> Update([FromBody] UpdateUserDTO model)
         {
-            try
+            var user = await _userManager.GetUserAsync(User);
+            var result = await _userService.UpdateUser(user, model);
+            if (result.Success)
             {
-                var userId = HttpContext.User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value;
-                var result = await _userService.Update(userId, updateUserRequest);
-                return NoContent();
+                return Ok(result);
             }
-            catch (MissingMemberException ex)
+            else
             {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
+                return BadRequest(result);
             }
         }
 
-        [HttpDelete("delete/id")]
+        [HttpDelete("delete/{id}")]
         [Authorize(Roles = "Admin, Regular")]
-        public async Task<IActionResult> Delete(string userId)
+        public async Task<IActionResult> Delete(string id)
         {
-            try
+            var result = await _userService.DeleteUserByUserId(id);
+            if (result.Success)
             {
-                await _userService.DeleteUser(userId);
-                return NoContent();
+                return Ok(result);
             }
-            catch (MissingMemberException ex)
+            else
             {
-                return BadRequest(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
+                return BadRequest(result);
             }
         }
 
-        [HttpPatch("photo/id")]
+        [HttpPatch("photo/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UploadImage([FromForm] AddImageDTO imageDto, string userId)
         {
             try
             {
                 var response = "";
-                var upload = await _imageService.UploadAsync(imageDto.Image);
+                var upload = await _imageService.UploadImage(imageDto.Image);
                 var imageProperties = new ImageAddedDTO()
                 {
                     PublicId = upload.PublicId,
@@ -173,12 +151,12 @@ namespace ContactBook.Controllers
 
         [HttpPost("add-new-user")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(string firstName, string lastName, string email, string userName, string phoneNumber)
+        public async Task<IActionResult> Create(RegistrationRequestDTO model)
         {
 
             try
             {
-                var result = await _userService.CreateAsync(firstName, lastName, email, userName, phoneNumber);
+                var result = await _userService.CreateAsync(model);
                 return Created("", result);
             }
             catch (MissingFieldException ex)

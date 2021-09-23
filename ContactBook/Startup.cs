@@ -1,6 +1,8 @@
 using ContactBook.Core.Implementations;
 using ContactBook.Core.Interfaces;
 using ContactBook.Data;
+using ContactBook.Data.Abstraction;
+using ContactBook.Data.Implementation;
 using ContactBook.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -20,22 +22,24 @@ namespace ContactBook
 {
     public class Startup
     {
-        
+        public IConfiguration Configuration { get; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
             
         }
 
-        public IConfiguration Configuration { get; }
+       
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IAuthentication, Authentication>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
             services.Configure<ImageUploadConfig>(Configuration.GetSection("ImageUploadSettings"));
 
             services.AddDbContext<ContactBookContext>(options =>

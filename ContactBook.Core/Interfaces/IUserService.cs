@@ -9,12 +9,15 @@ namespace ContactBook.Core.Interfaces
 {
     public interface IUserService
     {
+        Task<IdentityResult> CreateAsync(RegistrationRequestDTO model);
         Task<Response<Pagination<UserDTO>>> GetUsersByEmail(string email, int page);
         Task<Response<Pagination<UserDTO>>> GetUsersByName(string name, int page);
         Task<Response<Pagination<UserDTO>>> GetUserBySearchWord(string searchWord, int page);
         Task<Response<string>> UpdateUser(User user, UpdateUserDTO model);
         Task<Response<UserDTO>> GetUser(string id);
         Task<Response<string>> DeleteUserByUserId(string id);
+        Task<Response<Pagination<UserDTO>>> GetUsers(int pageNumber);
+        Task<bool> UploadImage(string userId, string url);
         //Task<bool> DeleteUser(string userId);
         //Task<IEnumerable<UserResponseDTO>> GetAllUsers(Pagination pagingParameter);
         //Task<UserResponseDTO> GetUser(string userId);

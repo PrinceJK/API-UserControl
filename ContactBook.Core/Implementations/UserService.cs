@@ -16,13 +16,24 @@ namespace ContactBook.Core.Implementations
     public class UserService : IUserService
     {
         private readonly UserManager<User> _userManager;
-        private readonly IImageService _imageService;
         private readonly IUserRepository _userRepository;
         public UserService(IServiceProvider service)
         {
-            _imageService = service.GetRequiredService<IImageService>();
             _userManager = service.GetRequiredService<UserManager<User>>();
             _userRepository = service.GetRequiredService<IUserRepository>();
+        }
+
+        public async Task<IdentityResult> CreateAsync(RegistrationRequestDTO model)
+        {
+            User user = new();
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
+
+            var result = await _userManager.CreateAsync(user, model.PassWord);
+
+            return result;
         }
         public async Task<Response<string>> DeleteUserByUserId(string id)
         {
@@ -183,6 +194,34 @@ namespace ContactBook.Core.Implementations
                 ItemsPerPage = _userRepository.perPage,
                 CurrentPage = pageNumber
             };
+        }
+
+        public async Task<bool> UploadImage(string userId, string url)
+        {
+            User user = await _userManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+                user.AvatarUrl = url;
+
+
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    return true;
+                }
+
+                string errors = string.Empty;
+
+                foreach (var error in result.Errors)
+                {
+                    errors += error.Description + Environment.NewLine;
+                }
+
+                throw new MissingMemberException(errors);
+            }
+
+            throw new ArgumentException("Resource not found");
         }
     }
 }
